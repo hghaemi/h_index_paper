@@ -1125,3 +1125,67 @@ def calculate_eeg(G):
     exp_a = expm(a) 
     ee_g = np.trace(exp_a) 
     return ee_g 
+
+
+def get_all_indices_custom(G : nx.Graph, P, use_original_formula_H=False):
+        
+    indices = dict()
+    H, frac = calculate_H(G=G)
+    indices['H'], indices['frac'] = H, frac
+   
+    m2 = specteral_moment_calculator(matrix=P, l=2)
+    m3 = specteral_moment_calculator(matrix=P, l=3)
+    m4 = specteral_moment_calculator(matrix=P, l=4)
+    indices['m2'], indices['m3'], indices['m4'] = m2, m3, m4
+    
+    
+    W1, W2, Q = synchronizability_calculator(G)
+    indices['W1'], indices['W2'], indices['Q'] = W1, W2, Q
+    
+    n = G.number_of_nodes()
+    indices['n'] = n
+    
+    return indices
+
+
+def H_calculator__(G, use_original_formula=False):
+    n = G.number_of_nodes()
+    m = G.number_of_edges()
+    
+    degrees = [G.degree(n) for n in G.nodes()]
+    #print("Calculating geomean")
+    degrees_geo_mean = np.exp(np.mean(np.log(degrees)))
+    avg_degree = 2*m/n
+    
+    if use_original_formula:
+        #print(f'Calculating H with geomean_degree:{degrees_geo_mean} and avg_degree:{avg_degree}')
+        H = np.divide((avg_degree - degrees_geo_mean), avg_degree, dtype=np.float32)
+        #H = np.round(H,5)
+        H = np.floor(H * 1e3) / 1e3
+        fraction = 1-H      
+    
+    else:
+        A = nx.to_numpy_array(G)
+        P = stochastic_matrix_calculator(G, A)
+        m_2 = specteral_moment_calculator(matrix=P, l=2)
+        inside_value = 0
+        edges = G.edges()
+    
+        for edge in edges:
+            i, j = edge
+  
+            inside_numerator = 1
+
+            inside_denominator = G.degree(i) * G.degree(j)
+            inside_value += inside_numerator / inside_denominator
+    
+    
+        inside_value /= m 
+    
+        inv_expected_degree = np.divide(inside_value, m_2)    
+        fraction = np.power((degrees_geo_mean * inv_expected_degree), n)
+        fraction = np.floor(fraction * 1e3) / 1e3
+        H = 1 - fraction
+        
+    return H, fraction
+    
