@@ -1027,3 +1027,49 @@ def create_supernova(clique, leaf):
         for clique_node in range(clique):
             g.add_edge(new_node, clique_node)
     return g
+
+
+def calculate_gini(graph):
+    degrees_list = []
+    sum_difference = 0
+    for node_index, deg in graph.degree():
+        degrees_list.append(deg)
+    degrees = np.array(degrees_list)
+    N = len(degrees)
+    mean_degree = np.mean(degrees)
+
+    for i in range(N):
+        for j in range(N):
+            sum_difference += abs(degrees[i]-degrees[j])
+
+    G = sum_difference / (2 * N ** 2 * mean_degree)
+    return np.round(G, 2)
+
+
+def randic_index(g):
+    rand_index = 0.0
+    for u, v in g.edges():
+        d1 = g.degree(u)
+        d2 = g.degree(v)
+        rand_index += 1.0 / math.sqrt(d1 * d2)
+    return rand_index
+
+
+def estrada_index(g):
+    n = g.number_of_nodes()
+    R = randic_index(g)
+    return (n - 2*R) / float(n - 2*np.sqrt(n - 1))
+
+
+def calculate_leaf_ratio(G, for_supernova=False):
+    """
+    Arguments:
+        G - The graph
+    Returns:
+        ratio - leaf to non-leaf nodes ratio in a graph
+    """
+    total_nodes = nx.number_of_nodes(G)
+    leaf_nodes = [node for node, degree in dict(G.degree()).items() if degree == 1]
+    num_of_leafs = len(leaf_nodes)
+    ratio = num_of_leafs/(total_nodes-num_of_leafs)
+    return np.round(ratio,2)

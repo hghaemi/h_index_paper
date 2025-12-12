@@ -177,3 +177,5 @@ pyrightconfig.json
 
 /Datasets
 /Networks
+/Plots
+/SavedNetworks
