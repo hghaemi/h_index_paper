@@ -7,6 +7,8 @@ import networkx as nx
 import numpy as np
 from scipy.sparse.linalg import eigsh
 from igraph import Graph
+from scipy.linalg import expm, fractional_matrix_power
+from scipy import special
 # from Entropy_Single_Layer import *
 
 
@@ -1073,3 +1075,53 @@ def calculate_leaf_ratio(G, for_supernova=False):
     num_of_leafs = len(leaf_nodes)
     ratio = num_of_leafs/(total_nodes-num_of_leafs)
     return np.round(ratio,2)
+
+
+def energy(G):
+    return np.sum(np.abs(nx.adjacency_spectrum(G)))
+
+def energey_based_on_p(G):
+    return np.sum(np.abs(stochastic_matrix_calculator(G)))
+
+def energy_laplacian(g):
+    ba = g.copy()
+    n = ba.number_of_nodes()
+    m_2 = ba.number_of_edges() * 2
+    eig_lap = nx.laplacian_spectrum(ba)
+    return np.sum(np.abs(eig_lap - m_2/float(n)))
+
+
+def gpq(g):
+    n = g.number_of_nodes()
+    a = nx.adjacency_matrix(g).toarray()
+    a_exm = expm(a)/(math.sqrt(2))
+    I = np.identity(g.number_of_nodes(),dtype=float)
+    #--------------Z----------------
+    a_sq = np.dot(a,a)/2
+    a_exm_neg = np.negative(a_exm)
+    erf1 = a_exm - expm(a_exm_neg)
+    erf2 = a_exm + expm(a_exm_neg)
+    erf2_inv = np.linalg.inv(erf2)
+    z_p1 = (math.sqrt(2*math.pi) * np.dot(erf1,erf2_inv)) + (2*I)
+    z = 1/2 * np.dot(z_p1,expm(a_sq))
+    #--------------Zii----------------
+    sum1 = 0
+    for x in range(n):
+        sum1 = z[x][x] + sum1
+    Zii = sum1/n
+    #-------------Zij------------
+    sum1 = 0
+    for i in range(n):
+        for j in range(n):
+            if i<j:
+                sum1 = z[i][j] + sum1
+    Zij = (2*sum1) / (n*(n-1))
+    return Zii,(Zij/10e8)
+
+
+def calculate_eeg(G):
+    n = G.number_of_nodes()
+    a = nx.adjacency_matrix(G).toarray()
+    exp_a = expm(a) 
+    ee_g = np.trace(exp_a) 
+    return ee_g 
