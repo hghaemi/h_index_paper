@@ -1,0 +1,30 @@
+graph_name,category,num_nodes,num_edges
+alpha,Biological Networks,289,1009
+beta,Biological Networks,289,1026
+bio-dmela,Biological Networks,7393,25569
+bio-grid-human,Biological Networks,9436,31182
+bio-grid-yeast,Biological Networks,6008,156945
+delta,Biological Networks,290,1004
+Dyslexia_Cortex_64node,Biological Networks,64,1891
+Florida ecosystem dry_128node_2106edge,Biological Networks,128,2075
+Little Rock Lake_182node,Biological Networks,183,2452
+Silwood Park_153node,Biological Networks,154,370
+Typical_Cortex_64node,Biological Networks,64,1770
+Ythan Estuary_134node,Biological Networks,135,600
+CA-AstroPh,Collaboration networks,17903,196972
+CA-cit-HepPh,Collaboration networks,21454,667330
+CA-CondMat,Collaboration networks,21363,91286
+CA-Erdos992,Collaboration networks,5094,7515
+CA-GrQc,Collaboration networks,4158,13422
+CA-HepTh,Collaboration networks,9877,25998
+CA-sandi_auths,Collaboration networks,86,124
+Celegans_Metabolic_453node,Miscellaneous Networks,453,2040
+Dolphins_63node,Miscellaneous Networks,62,159
+Karate_Club_33node,Miscellaneous Networks,34,78
+Polbooks_241node,Miscellaneous Networks,240,1241
+feather-deezer-social,Social networks,28281,92752
+feather-lastfm-social,Social networks,7624,27806
+musae_facebook,Social networks,22470,171002
+musae_github,Social networks,37700,289003
+soc-twitter-follows,Social networks,404719,713319
+soc-youtube,Social networks,495957,1936748
