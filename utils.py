@@ -9,6 +9,7 @@ from scipy.sparse.linalg import eigsh
 from igraph import Graph
 from scipy.linalg import expm, fractional_matrix_power
 from scipy import special
+from scipy.linalg import eigh, eigvals
 # from Entropy_Single_Layer import *
 
 
@@ -1188,4 +1189,56 @@ def H_calculator__(G, use_original_formula=False):
         H = 1 - fraction
         
     return H, fraction
+
+
+def estrada_index_using_p(G, P, k_max=10):
+
+    n = G.number_of_nodes()
+
+    if n == 0:
+        return np.nan
+
+    if P.shape != (n, n):
+        raise ValueError("Shape of P must be (n, n)")
+
+    try:
+        eigs = eigvals(P)
+        eigs = np.real(eigs)  
+
+        index_value = 0.0
+        for k in range(2, k_max + 1):
+            m_k = np.mean(eigs ** k)
+            index_value += m_k / math.factorial(k)
+
+        return index_value
+
+    except Exception as e:
+        print(f"Spectral index failed (n={n}): {e}")
+        return np.nan
+
+
+def compute_energies(G):
+    n = G.number_of_nodes()
+    m = G.number_of_edges()
     
+    if n == 0:
+        return np.nan, np.nan
+
+    try:
+        A_dense = nx.to_numpy_array(G, dtype=float)
+        eigs_adj = eigh(A_dense, eigvals_only=True)
+        energy = np.sum(np.abs(eigs_adj))
+    except Exception as e:
+        print(f"Adjacency energy failed (n={n}): {e}")
+        energy = np.nan
+
+    try:
+        mu = (2 * m) / n
+        L_dense = nx.laplacian_matrix(G).astype(float).toarray()
+        eigs_lap = eigh(L_dense, eigvals_only=True)
+        laplacian_energy = np.sum(np.abs(eigs_lap - mu))
+    except Exception as e:
+        print(f"Laplacian energy failed (n={n}): {e}")
+        laplacian_energy = np.nan
+
+    return energy, laplacian_energy    

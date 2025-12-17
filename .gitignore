@@ -179,3 +179,8 @@ pyrightconfig.json
 /Networks
 /Plots
 /SavedNetworks
+
+real_graphs_data.csv
+real_networks_spectral_index_GP_under_1000.csv
+total_real_networks_E,E-L_filled.xlsx
+total_real_networks_E,E-L.xlsx
