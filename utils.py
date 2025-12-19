@@ -1242,3 +1242,18 @@ def compute_energies(G):
         laplacian_energy = np.nan
 
     return energy, laplacian_energy    
+
+
+def create_comb_graph(n_total):
+
+    k = n_total // 2
+    if k <= 0:
+        return nx.empty_graph(0)
+    G = nx.Graph()
+    backbone = list(range(k))
+    G.add_nodes_from(backbone)
+    G.add_edges_from([(i, i + 1) for i in range(k - 1)])
+    teeth = list(range(k, 2 * k))
+    G.add_nodes_from(teeth)
+    G.add_edges_from([(i, i + k) for i in range(k)])  
+    return G
